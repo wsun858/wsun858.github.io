@@ -8,7 +8,7 @@
 
     <title>Spot Control</title>
 
-    <meta name="description" content="">
+    <meta name="description" content="Closed-loop Mobile Manipulator Control Using a Distance Sensor">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
@@ -25,6 +25,8 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.8.0/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.3/clipboard.min.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=default'></script>
+
     
     <script src="js/app.js"></script>
     <script src="js/video_comparison.js"></script>
@@ -47,7 +49,7 @@
                     </li>
                     <li>
                         <a href="https://gleicher.sites.cs.wisc.edu/">
-                          Michael Gleicher
+                            Michael Gleicher
                         </a>
                     </li>
                     </br>University of Wisconsin - Madison
@@ -62,9 +64,12 @@
                     Abstract
                 </h3>
                 <p class="text-justify">
-                    <!-- We investigate methods for determining if a planar surface contains geometric deviations (<i>e.g.</i>, protrusions, objects, divots, or cliffs) using only an instantaneous measurement from a miniature optical time-of-flight sensor. The key to our method is to utilize the entirety of information encoded in raw time-of-flight data captured by off-the-shelf distance sensors. We provide an analysis of the problem in which we identify the key ambiguity between geometry and surface photometrics. To overcome this challenging ambiguity, we fit a Gaussian mixture model to a small dataset of planar surface measurements. This model implicitly captures the expected geometry and distribution of photometrics of the planar surface and is used to identify measurements that are likely to contain deviations. We characterize our method on a variety of surfaces and planar deviations across a range of scenarios. We find that our method utilizing raw time-of-flight data outperforms baselines which use only derived distance estimates. We build an example application in which our method enables mobile robot obstacle and cliff avoidance over a wide field-of-view.<br><br -->
-                
-                    We propose a closed-loop control system for a mobile manipulator using exteroception from a miniature optical time-of-flight sensor. As the arm follows a designated path, I utilize arm-mounted proximity sensors to ensure that the trajectory stays within the intended target range with minimal deviation throughout its sweep. We do so by combining direct distance measurements with proprioceptive data through a Kalman Filter to probabilistically estimate the true height of the robot hand. We are motivated to use SPADs for sensing because they are low-cost, lightweight, and low-power. For this robot application, we can easily mount multiple sensors around the Spot arm without compromising any performance to Spot operation (unlike a bulky LIDAR). We demonstrate the effectiveness of our method in a variety of scenarios, including a mobile manipulator reaching for a target object and a mobile manipulator avoiding obstacles in its path.
+                    We propose a closed-loop control system for mobile manipulator sweeping using a miniature optical time-of-flight sensor.
+                    As the arm follows a designated path, we utilize arm-mounted proximity sensors to ensure that the trajectory stays within the intended target range with minimal deviation throughout its sweep.
+                    We do so by combining direct distance measurements with proprioceptive data through a Kalman Filter to probabilistically estimate the true height of the robot hand.
+                    We are motivated to use SPADs for sensing because they are low-cost, lightweight, and low-power.
+                    This enables a diverse set of robot sensing applications without compromising any performance capabilities.
+                    We demonstrate the effectiveness of our method with a simple visual servoing application, where a mobile manipulator is able to correct its sweeping trajectory based on the distance sensor feedback.
                 </p>
             </div>
         </div>
@@ -89,6 +94,13 @@
                 <video id="v1" width="100%" controls>
                     <source src="figs/capture.mp4" type="video/mp4" />
                 </video>
+
+                <br><br>
+
+                The Boston Dynamics Spot is the mobile manipulator used in this project.
+                We mount an AMS TMF8820 sensor (9 pixel, 3x3 configuration) underneath the hand.
+                We use a system of 8 OptiTrack motion capture cameras to provide ground truth data.
+                For data collection, we use a single floor surface with a flat plane, and we move the Spot arm and base in various configurations around the room.
             </div>
         </div>
         <br>
@@ -98,7 +110,22 @@
                 <h3>
                     Methodology
                 </h3>
-                TODO
+                <b>Data synchronization:</b> during data capture, we have three streams of data (distance sensor, proprioception, and ground truth). The distance sensor is by far the slowest stream (~2 Hz due to limitations in I2C bandwidth).
+                The other two streams are much faster (~100 Hz). Hence, we use the closest timestamps from the proprioception and ground truth streams to the distance sensor timestamps to synchronize the data.
+
+                <br><br>
+                <b>Proprioceptive data:</b> the Spot provides proprioceptive data in the form of joint angles, joint velocities, and corresponding transforms between frames of reference. The Cartesian estimate of the robot hand can be directly calculated from the joint angles and transforms.
+                Then, the distance corresponding to the hand-mounted sensor is given by \(1/\cos(\psi) * pose.z\), where \(pose.z\) is the z component of the hand pose in the world frame and \(\psi\) is the yaw angle of the hand in the world frame.
+                
+                <br><br>
+                <b>Distance sensor data:</b> first, the peak bin of the sensor's center zone is a reasonable approximation of the distance from the sensor to the ground.
+                A more robust method is plane fitting, where a plane is fit to peak bin distance to all nine zones. Then, the distance estimate is given by the distance to the plane from the center ray.
+                Finally, there is a constant position offset from the hand frame to the sensor frame that can be directly calculated/measured.
+
+                <br><br>
+                <b>Kalman Filter:</b> we use a 1D Kalman Filter from the FilterPy library for state estimation.
+                The hyperparameters are initialized based on noise from the dataset.
+                Then, the hyperparameters are tuned to give a balance between the distance sensor and proprioceptive data.
             </div>
         </div>
         <br>
@@ -109,34 +136,33 @@
                     Results
                 </h3>
                 <img src="figs/data.png" width="75%" class="center"/><br>
-                Figure 1: TODO
+                <b>Figure 1: Error of various data sources.</b> A sample visualization of the data captured by the distance sensor and proprioception across time over 90 samples. For the data captured by the distance sensor, we visualize both the distance measurements from peak-finding as well as from plane fitting.
 
                 <br><br>
                 <img src="figs/kf.png" width="75%" class="center"/><br>
-                Figure 2: TODO
-
+                <b>Figure 2: Error of proprioception, exteroception, and Kalman Filter.</b> With the Kalman Filter, we can meaningfully interpolate the true height of the robot hand between proprioceptive and distance sensor measurements. We can see that the Kalman Filter is able to smooth out the noise in the proprioceptive measurements and provide a more accurate estimate of the true height of the robot hand.
+                
                 <br><br>
+                With the Kalman Filter, we are able to improve Spot hand height localization from a MAE of 2.9mm (proprioception) to 1.5mm.
             </div>
         </div>
         <br>
 
-        <!-- <div class="row">
+        <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <h3>
-                    Citation
+                    Next Steps
                 </h3>
-                <div class="form-group col-md-12 col-md-offset-0">
-                    <textarea id="bibtex" class="form-control" readonly>
-@article{Sifferman2024using,
-    title={Using a Distance Sensor to Detect Deviations in a Planar Surface},
-    author={Sifferman, Carter and Sun, William and Gupta, Mohit and Gleicher, Michael},
-    journal={arXiv preprint arXiv:2408.03838},
-    year={2024}
-}
-                    </textarea>
-                </div>
+                We have shown that localization can be improved using a single miniature optical time-of-flight sensor even on an expensive, precise mobile manipulator.
+                While this demonstration is only in one dimension, it indicates the potential for 3D localization using a single distance sensor.
+                With a wide-range, multi-zone distance sensor, if we can identify and locate multiple planes within the sensor's field of view, it would enable 3D localization.
+                For example, the floor and walls of a room could be identified and localized with a single configuration on a single sensor.
+                This would be a significant improvement for lightweight computing applications (e.g., on microdrones), where bulky LIDARs are not feasible.
+                It also offers an edge over stereo cameras by directly encoding geometric information with reduced data requirements.
+                <br><br>
             </div>
-        </div> -->
+        </div>
+        <br>
 
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
