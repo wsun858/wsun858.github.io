@@ -69,7 +69,7 @@
                     We do so by combining direct distance measurements with proprioceptive data through a Kalman Filter to probabilistically estimate the true height of the robot hand.
                     We are motivated to use SPADs for sensing because they are low-cost, lightweight, and low-power.
                     This enables a diverse set of robot sensing applications without compromising any performance capabilities.
-                    We demonstrate the effectiveness of our method with a simple visual servoing application, where a mobile manipulator is able to correct its sweeping trajectory based on the distance sensor feedback.
+                    We demonstrate the effectiveness of our method with a visual servoing application, where a mobile manipulator is able to correct its sweeping trajectory based on the distance sensor feedback.
                 </p>
             </div>
         </div>
@@ -82,6 +82,15 @@
                 <video id="v0" width="100%" controls>
                     <source src="figs/demo.mp4" type="video/mp4" />
                 </video>
+
+                <br><br>
+
+                <p class="text-justify">
+                    The video demonstrates a simple visual servoing example, where a mobile manipulator corrects its hand position based on distance sensor feedback.
+                    At each update from the distance sensor, the mobile manipulator adjusts its hand position to maintain a constant height above the ground.
+                    When an object is placed underneath the hand, we use a tuned Kalman Filter to interpolate the true height of the hand between the proprioception and exteroception.
+                    With closed-loop control, we readjust its hand position to maintain constant height.
+                </p>
             </div>
         </div>
         <br>
@@ -135,14 +144,18 @@
                 <h3>
                     Results
                 </h3>
-                <img src="figs/data.png" width="75%" class="center"/><br>
+                <!-- <img src="figs/data.png" width="75%" class="center"/><br>
                 <b>Figure 1: Error of various data sources.</b> A sample visualization of the data captured by the distance sensor and proprioception across time over 90 samples. For the data captured by the distance sensor, we visualize both the distance measurements from peak-finding as well as from plane fitting.
 
-                <br><br>
-                <img src="figs/kf.png" width="75%" class="center"/><br>
-                <b>Figure 2: Error of proprioception, exteroception, and Kalman Filter.</b> With the Kalman Filter, we can meaningfully interpolate the true height of the robot hand between proprioceptive and distance sensor measurements. We can see that the Kalman Filter is able to smooth out the noise in the proprioceptive measurements and provide a more accurate estimate of the true height of the robot hand.
+                <br><br> -->
+                <img src="figs/boxplot.png" width="100%" class="center"/><br>
+                <b>Figure: Absolute error boxplot of proprioception, exteroception, and Kalman Filter.</b> These results are derived from data collected in the same way as shown in the video. The data is collected over time with around 90 total samples.
+                We visualize both the error from single-zone peak-finding distances as well as the error from plane fitting.
+                Throughout data collection, we see that even on flat terrain, Spot's proprioception can be much less accurate than the distance sensor.
                 
                 <br><br>
+                With the Kalman Filter, we can meaningfully interpolate the true height of the robot hand between proprioceptive and distance sensor measurements.
+                We can see that the Kalman Filter is able to provide a more accurate estimate of the true height of the robot hand compared to proprioception alone.
                 With the Kalman Filter, we are able to improve Spot hand height localization from a MAE of 2.9mm (proprioception) to 1.5mm.
             </div>
         </div>
