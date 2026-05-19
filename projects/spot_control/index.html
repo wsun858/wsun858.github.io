@@ -1,14 +1,13 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
-<head lang="en">
+<head>
     <meta charset="UTF-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-    <title>Spot Control</title>
+    <title>Closed-Loop Mobile Manipulator Control Using a Distance Sensor</title>
 
-    <meta name="description" content="Closed-loop Mobile Manipulator Control Using a Distance Sensor">
+    <meta name="description" content="Closed-Loop Mobile Manipulator Control Using a Distance Sensor">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
@@ -27,16 +26,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.3/clipboard.min.js"></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=default'></script>
 
-    
-    <script src="js/app.js"></script>
-    <script src="js/video_comparison.js"></script>
 </head>
 
 <body>
     <div class="container" id="main">
         <div class="row">
             <h2 class="col-md-12 text-center">
-                Closed-loop Mobile Manipulator Control Using a Distance Sensor
+                Closed-Loop Mobile Manipulator Control Using a Distance Sensor
             </h2>
         </div>
         <div class="row">
@@ -52,7 +48,7 @@
                             Michael Gleicher
                         </a>
                     </li>
-                    </br>University of Wisconsin - Madison
+                    <br>University of Wisconsin-Madison
                 </ul>
             </div>
         </div>
@@ -65,11 +61,11 @@
                 </h3>
                 <p class="text-justify">
                     We propose a closed-loop control system for mobile manipulator sweeping using a miniature optical time-of-flight sensor.
-                    As the arm follows a designated path, we utilize arm-mounted proximity sensors to ensure that the trajectory stays within the intended target range with minimal deviation throughout its sweep.
-                    We do so by combining direct distance measurements with proprioceptive data through a Kalman Filter to probabilistically estimate the true height of the robot hand.
+                    As the arm follows a designated path, we use arm-mounted proximity sensors to keep the trajectory within the intended target range with minimal deviation throughout its sweep.
+                    We do so by combining direct distance measurements with proprioceptive data through a Kalman filter to probabilistically estimate the true height of the robot hand.
                     We are motivated to use SPADs for sensing because they are low-cost, lightweight, and low-power.
                     This enables a diverse set of robot sensing applications without compromising any performance capabilities.
-                    We demonstrate the effectiveness of our method with a visual servoing application, where a mobile manipulator is able to correct its sweeping trajectory based on the distance sensor feedback.
+                    We demonstrate the effectiveness of our method with a visual servoing application, where a mobile manipulator corrects its sweeping trajectory based on distance sensor feedback.
                 </p>
             </div>
         </div>
@@ -88,8 +84,8 @@
                 <p class="text-justify">
                     The video demonstrates a simple visual servoing example, where a mobile manipulator corrects its hand position based on distance sensor feedback.
                     At each update from the distance sensor, the mobile manipulator adjusts its hand position to maintain a constant height above the ground.
-                    When an object is placed underneath the hand, we use a tuned Kalman Filter to interpolate the true height of the hand between the proprioception and exteroception.
-                    With closed-loop control, we readjust its hand position to maintain constant height.
+                    When an object is placed underneath the hand, we use a tuned Kalman filter to interpolate the true height of the hand between proprioception and exteroception.
+                    With closed-loop control, the robot readjusts its hand position to maintain a constant height.
                 </p>
             </div>
         </div>
@@ -132,7 +128,7 @@
                 Finally, there is a constant position offset from the hand frame to the sensor frame that can be directly calculated/measured.
 
                 <br><br>
-                <b>Kalman Filter:</b> we use a 1D Kalman Filter from the FilterPy library for state estimation.
+                <b>Kalman filter:</b> we use a 1D Kalman filter from the FilterPy library for state estimation.
                 The hyperparameters are initialized based on noise from the dataset.
                 Then, the hyperparameters are tuned to give a balance between the distance sensor and proprioceptive data.
             </div>
@@ -149,14 +145,14 @@
 
                 <br><br> -->
                 <img src="figs/boxplot.png" width="100%" class="center"/><br>
-                <b>Figure: Absolute error boxplot of proprioception, exteroception, and Kalman Filter.</b> These results are derived from data collected in the same way as shown in the video. The data is collected over time with around 90 total samples.
+                <b>Figure: Absolute error boxplot of proprioception, exteroception, and Kalman filter.</b> These results are derived from data collected in the same way as shown in the video. The data is collected over time with around 90 total samples.
                 We visualize both the error from single-zone peak-finding distances as well as the error from plane fitting.
                 Throughout data collection, we see that even on flat terrain, Spot's proprioception can be much less accurate than the distance sensor.
                 
                 <br><br>
-                With the Kalman Filter, we can meaningfully interpolate the true height of the robot hand between proprioceptive and distance sensor measurements.
-                We can see that the Kalman Filter is able to provide a more accurate estimate of the true height of the robot hand compared to proprioception alone.
-                With the Kalman Filter, we are able to improve Spot hand height localization from a MAE of 2.9mm (proprioception) to 1.5mm.
+                With the Kalman filter, we can meaningfully interpolate the true height of the robot hand between proprioceptive and distance sensor measurements.
+                The Kalman filter provides a more accurate estimate of the true height of the robot hand compared to proprioception alone.
+                With the Kalman filter, we improve Spot hand height localization from a MAE of 2.9mm (proprioception) to 1.5mm.
             </div>
         </div>
         <br>
@@ -171,7 +167,7 @@
                 With a wide-range, multi-zone distance sensor, if we can identify and locate multiple planes within the sensor's field of view, it would enable 3D localization.
                 For example, the floor and walls of a room could be identified and localized with a single configuration on a single sensor.
                 This would be a significant improvement for lightweight computing applications (e.g., on microdrones), where bulky LIDARs are not feasible.
-                It also offers an edge over stereo cameras by directly encoding geometric information with reduced data requirements.
+                It also offers an advantage over stereo cameras by directly encoding geometric information with reduced data requirements.
                 <br><br>
             </div>
         </div>
@@ -179,8 +175,7 @@
 
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
-                The website template was borrowed from <a href="http://mgharbi.com/">Michaël Gharbi</a>.
-                </p>
+                The website template was adapted from <a href="http://mgharbi.com/">Michaël Gharbi</a>.
             </div>
         </div>
     </div>
